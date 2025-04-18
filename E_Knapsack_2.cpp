@@ -1,0 +1,83 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define endl '\n'
+#define int long long
+int mod = 1e9 + 7;
+int mod_add(int a, int b, int m) { return (a % m + b % m) % m; }
+int mod_mul(int a, int b, int m) { return (a % m * b % m) % m; }
+int mod_sub(int a, int b, int m) { return ((a % m - b % m) + m) % m; }
+int bin_exp(int base, int exp, int m)
+{
+    if (exp == 0)
+        return 1;
+    int half = bin_exp(base, exp / 2, m);
+    half = (half * half) % m;
+    if (exp % 2 != 0)
+    {
+        half = (half * base) % m;
+    }
+    return half;
+}
+int mod_inv(int a, int m) { return bin_exp(a, m - 2, m); }
+/*---------------------------------------------------------------------------------------*/
+
+void solve()
+{
+    int n, k;
+    cin >> n >> k;
+
+    vector<int> w(n), c(n);
+    int sum = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        int a, b;
+        cin>>a>>b;
+        w[i] = a;
+        c[i] = b;
+        sum+=c[i];
+    }    
+    
+    
+    
+
+    vector<vector<int>> dp(n, vector<int>(sum + 1, 1e9));
+    for (int i = 0; i < n; i++)
+        dp[i][0] = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        if (i == 0)
+        {
+            dp[i][c[i]] = w[i];
+            continue;
+        }
+        for (int j = 1; j <= sum; j++)
+        {
+            dp[i][j] = dp[i-1][j];
+            if(j - c[i]>=0)
+            dp[i][j] = min(dp[i][j], w[i] + dp[i - 1][j - c[i]]);
+        }
+    }
+    int ans = INT_MIN;
+
+    for (int i = 0; i <= sum; i++)
+    {
+        //cout<<dp[n - 1][i]<<" ";
+        if (dp[n - 1][i] <= k)
+        {
+            ans = max(ans, i);
+        }
+    }
+    cout << ans << endl;
+}
+
+signed main()
+{
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    solve();
+
+    return 0;
+}
